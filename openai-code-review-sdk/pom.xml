@@ -121,6 +121,9 @@
                             <include>org.slf4j:slf4j-api:jar:</include>
                             <include>org.slf4j:slf4j-simple:jar:</include>
                             <include>com.auth0:java-jwt:jar:</include>
+                            <include>com.fasterxml.jackson.core:jackson-core:jar:</include>
+                            <include>com.fasterxml.jackson.core:jackson-databind:jar:</include>
+                            <include>com.fasterxml.jackson.core:jackson-annotations:jar:</include>
                             <include>org.eclipse.jgit:org.eclipse.jgit:</include>
                         </includes>
                     </artifactSet>
