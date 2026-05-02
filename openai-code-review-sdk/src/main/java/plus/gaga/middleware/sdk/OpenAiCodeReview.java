@@ -20,11 +20,11 @@ public class OpenAiCodeReview {
 
     // ChatGLM 配置
     private String chatglm_apiHost = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
-    private String chatglm_apiKeySecret = "";
+    private String chatglm_apiKeySecret = "50838fdd6ee3414594e47ece0cd5be30.fdn4C393LncqLKa6";
 
     // Github 配置
-    private String github_review_log_uri;
-    private String github_token;
+    private String github_review_log_uri = "https://github.com/YNAlone/openai-code-review-log";
+    private String github_token = "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";
 
     // 工程配置 - 自动获取
     private String github_project;
