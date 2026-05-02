@@ -8,28 +8,32 @@ import plus.gaga.middleware.sdk.infrastructure.openai.IOpenAI;
 import plus.gaga.middleware.sdk.infrastructure.openai.impl.ChatGLM;
 import plus.gaga.middleware.sdk.infrastructure.weixin.WeiXin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class OpenAiCodeReview {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenAiCodeReview.class);
 
-    // 配置配置
-    private String weixin_appid = "wx5a228ff69e28a91f";
-    private String weixin_secret = "0bea03aa1310bac050aae79dd8703928";
-    private String weixin_touser = "or0Ab6ivwmypESVp_bYuk92T6SvU";
-    private String weixin_template_id = "l2HTkntHB71R4NQTW77UkcqvSOIFqE_bss1DAVQSybc";
-
-    // ChatGLM 配置
-    private String chatglm_apiHost = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
-    private String chatglm_apiKeySecret = "50838fdd6ee3414594e47ece0cd5be30.fdn4C393LncqLKa6";
-
-    // Github 配置
-    private String github_review_log_uri = "https://github.com/YNAlone/openai-code-review-log";
-    private String github_token = "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";
-
-    // 工程配置 - 自动获取
-    private String github_project;
-    private String github_branch;
-    private String github_author;
+    // 默认配置（环境变量未设置时使用）
+    private static final Map<String, String> DEFAULT_CONFIG = new HashMap<String, String>() {{
+        // Github 配置
+        put("GITHUB_REVIEW_LOG_URI", "https://github.com/YNAlone/openai-code-review-log");
+        put("GITHUB_TOKEN", "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");
+        // 微信配置
+        put("WEIXIN_APPID", "wx5a228ff69e28a91f");
+        put("WEIXIN_SECRET", "0bea03aa1310bac050aae79dd8703928");
+        put("WEIXIN_TOUSER", "or0Ab6ivwmypESVp_bYuk92T6SvU");
+        put("WEIXIN_TEMPLATE_ID", "l2HTkntHB71R4NQTW77UkcqvSOIFqE_bss1DAVQSybc");
+        // ChatGLM 配置
+        put("CHATGLM_APIHOST", "https://open.bigmodel.cn/api/paas/v4/chat/completions");
+        put("CHATGLM_APIKEYSECRET", "50838fdd6ee3414594e47ece0cd5be30.fdn4C393LncqLKa6");
+        // 工程配置（CI 环境自动注入，本地运行需要手动设置或在此处配置默认值）
+        put("COMMIT_PROJECT", "");
+        put("COMMIT_BRANCH", "");
+        put("COMMIT_AUTHOR", "");
+        put("COMMIT_MESSAGE", "");
+    }};
 
     public static void main(String[] args) throws Exception {
         GitCommand gitCommand = new GitCommand(
@@ -41,17 +45,12 @@ public class OpenAiCodeReview {
                 getEnv("COMMIT_MESSAGE")
         );
 
-        /**
-         * 项目：{{repo_name.DATA}} 分支：{{branch_name.DATA}} 作者：{{commit_author.DATA}} 说明：{{commit_message.DATA}}
-         */
         WeiXin weiXin = new WeiXin(
                 getEnv("WEIXIN_APPID"),
                 getEnv("WEIXIN_SECRET"),
                 getEnv("WEIXIN_TOUSER"),
                 getEnv("WEIXIN_TEMPLATE_ID")
         );
-
-
 
         IOpenAI openAI = new ChatGLM(getEnv("CHATGLM_APIHOST"), getEnv("CHATGLM_APIKEYSECRET"));
 
@@ -64,7 +63,12 @@ public class OpenAiCodeReview {
     private static String getEnv(String key) {
         String value = System.getenv(key);
         if (null == value || value.isEmpty()) {
-            throw new RuntimeException("value is null");
+            String defaultValue = DEFAULT_CONFIG.get(key);
+            if (defaultValue != null && !defaultValue.isEmpty()) {
+                logger.warn("环境变量 '{}' 未设置，使用项目默认配置", key);
+                return defaultValue;
+            }
+            throw new RuntimeException("Environment variable '" + key + "' is not set and no default configured");
         }
         return value;
     }
