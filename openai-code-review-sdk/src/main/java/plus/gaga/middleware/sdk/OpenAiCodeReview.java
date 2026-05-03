@@ -89,6 +89,6 @@ public class OpenAiCodeReview {
 
         ChatCompletionSyncResponseDTO response = JSON.parseObject(content.toString(), ChatCompletionSyncResponseDTO.class);
         System.out.println(response.getChoices().get(0).getMessage().getContent());
-        return
+        return response.getChoices().get(0).getMessage().getContent();
     }
 }
