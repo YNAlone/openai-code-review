@@ -136,10 +136,10 @@ public class OpenAiCodeReview {
 
         git.add().addFilepattern(dateFolderName + "/" + filename).call();
         git.commit().setMessage("Add new File").call();
-        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""));
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, "")).call();
 
 
-        return "https://github.com/YNAlone/openai-code-review-log/blob/master/" + dateFolderName + "/" + filename;
+        return "https://github.com/YNAlone/openai-code-review-log/blob/main/" + dateFolderName + "/" + filename;
     }
 
     private static String generateRandomString(int length) {
