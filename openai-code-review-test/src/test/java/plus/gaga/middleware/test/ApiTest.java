@@ -13,7 +13,7 @@ public class ApiTest {
 
     @Test
     public void test() {
-        System.out.println(Integer.parseInt("aa9999"));
+        System.out.println(Integer.parseInt("aa8888"));
 //        System.out.println(Integer.parseInt("aaaa2"));
 //        System.out.println(Integer.parseInt("aaaa3"));
     }
