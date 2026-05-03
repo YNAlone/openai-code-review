@@ -49,7 +49,7 @@ public class OpenAiCodeReview {
         //    2、glm代码评审
         String log = codeReview(diffCode.toString());
         System.out.println("code Review" + log);
-//3、写日志
+        //3、写日志
         String logs = writeLog(token , log);
         System.out.println("日志" + logs);
     }
@@ -129,7 +129,7 @@ public class OpenAiCodeReview {
             dateFolder.mkdirs();
         }
         String filename = generateRandomString(12) + ".md";
-        File file = new File(dateFolderName , filename);
+        File file = new File(dateFolder, filename);
         try(FileWriter writer =  new FileWriter(file)) {
             writer.write(log);
         }
