@@ -1,24 +1,32 @@
 package plus.gaga.middleware.sdk;
 
 import com.alibaba.fastjson2.JSON;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import plus.gaga.middleware.sdk.domain.model.Model;
 import plus.gaga.middleware.sdk.infrastructure.openai.dto.ChatCompletionRequestDTO;
 import plus.gaga.middleware.sdk.infrastructure.openai.dto.ChatCompletionSyncResponseDTO;
 import plus.gaga.middleware.sdk.types.utils.BearerTokenUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
 
 public class OpenAiCodeReview {
 
     public static void main(String[] args) throws Exception {
-        System.out.println("测试执行");
+        System.out.println("代码校验，测试执行");
+
+        String token = System.getenv("GITHUB_TOKEN");
+        if(token == null || token.isEmpty()){
+            throw new RuntimeException("token is null");
+        }
 
         // 1. 代码检出
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "HEAD~1", "HEAD");
@@ -41,8 +49,10 @@ public class OpenAiCodeReview {
         //    2、glm代码评审
         String log = codeReview(diffCode.toString());
         System.out.println("code Review" + log);
+//3、写日志
+        String logs = writeLog(token , log);
+        System.out.println("日志" + logs);
     }
-
 
 
     private static String codeReview(String diffCode) throws Exception {
@@ -103,5 +113,42 @@ public class OpenAiCodeReview {
         ChatCompletionSyncResponseDTO response = JSON.parseObject(content.toString(), ChatCompletionSyncResponseDTO.class);
         System.out.println(response.getChoices().get(0).getMessage().getContent());
         return response.getChoices().get(0).getMessage().getContent();
+    }
+
+    private static String writeLog(String token, String log) throws Exception {
+
+        Git git = Git.cloneRepository()             //1.克隆一个Git仓库
+                .setURI("https://github.com/YNAlone/openai-code-review-log.git")                         //2.设置远程仓库
+                .setDirectory(new File("repo"))             //3.克隆到本地指定文件夹
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""))         //4.设置身份凭证
+                .call();
+
+        String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        File dateFolder = new File("repo/" + dateFolderName);
+        if (!dateFolder.exists()) {
+            dateFolder.mkdirs();
+        }
+        String filename = generateRandomString(12) + ".md";
+        File file = new File(dateFolderName , filename);
+        try(FileWriter writer =  new FileWriter(file)) {
+            writer.write(log);
+        }
+
+        git.add().addFilepattern(dateFolderName + "/" + filename).call();
+        git.commit().setMessage("Add new File").call();
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""));
+
+
+        return "https://github.com/YNAlone/openai-code-review-log/blob/master" + dateFolderName + "/" + filename;
+    }
+
+    private static String generateRandomString(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopgrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return sb.toString();
     }
 }
