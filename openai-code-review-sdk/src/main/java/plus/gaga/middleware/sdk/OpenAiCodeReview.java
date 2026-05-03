@@ -1,6 +1,7 @@
 package plus.gaga.middleware.sdk;
 
 import com.alibaba.fastjson2.JSON;
+import org.apache.logging.log4j.message.Message;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -8,15 +9,14 @@ import plus.gaga.middleware.sdk.domain.model.Model;
 import plus.gaga.middleware.sdk.infrastructure.openai.dto.ChatCompletionRequestDTO;
 import plus.gaga.middleware.sdk.infrastructure.openai.dto.ChatCompletionSyncResponseDTO;
 import plus.gaga.middleware.sdk.types.utils.BearerTokenUtils;
-
+import plus.gaga.middleware.sdk.types.utils.WXAccessTokenUtils;
+import plus.gaga.middleware.sdk.domain.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 public class OpenAiCodeReview {
 
@@ -52,8 +52,64 @@ public class OpenAiCodeReview {
         //3、写日志
         String logs = writeLog(token , log);
         System.out.println("日志" + logs);
+//        4.推送消息到微信
+        pushMessage(logs);
+        System.out.println("pushMessage" + logs);
     }
 
+    private static void pushMessage(String logUrl) {
+        // 1. 获取微信 access_token
+        String accessToken = WXAccessTokenUtils.getAccessToken();
+        System.out.println(accessToken);
+
+        // 2. 构造模板消息内容
+        Message message = new Message();
+        message.put("project", "big-market");
+        message.put("branch", "weixin-push");
+        message.put("author", "niecccccc");
+        message.put("commit", "测试微信推送");
+
+        // 3. 调用微信模板消息发送接口
+        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
+        sendPostRequest(url, JSON.toJSONString(message));
+    }
+    private static void sendPostRequest(String urlString, String jsonBody) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
+                String response = scanner.useDelimiter("\\A").next();
+                System.out.println(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static class Message {
+        private String touser = "oeDKo2C9UYXfb9h2csoMTg84K10U";
+        private String template_id = "6phduhnE-FPrSbx4xqnd_9PekPXczY8LiQO_A0rB3R8";
+        private String url = "https://github.com/YNAlone/openai-code-review-log/blob/main/2026-05-03/1IdpYf3CuAjh.md";
+        private Map<String, Map<String, String>> data = new HashMap<>();
+
+        public void put(String key, String value) {
+            data.put(key, new HashMap<String, String>() {
+                {
+                    put("value", value);
+                }
+            });
+        }
+    }
 
     private static String codeReview(String diffCode) throws Exception {
         String apiKeySecret = "50838fdd6ee3414594e47ece0cd5be30.fdn4C393LncqLKa6";
