@@ -75,19 +75,35 @@ public class ApiTest {
 
     }
 
+    /**
+     * 微信模板消息推送测试
+     * <p>
+     * 流程：获取微信 access_token → 构造模板消息 JSON → 调用微信模板消息接口发送通知
+     */
     @Test
     public void test_wx() {
+        // 1. 获取微信 access_token
         String accessToken = WXAccessTokenUtils.getAccessToken();
         System.out.println(accessToken);
 
+        // 2. 构造模板消息内容
         Message message = new Message();
-        message.put("project","big-market");
-        message.put("review","feat: 新加功能");
+        message.put("project", "big-market");
+        message.put("branch", "weixin-push");
+        message.put("author", "niecccccc");
+        message.put("commit", "测试微信推送");
 
+        // 3. 调用微信模板消息发送接口
         String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
         sendPostRequest(url, JSON.toJSONString(message));
     }
 
+    /**
+     * 发送 HTTP POST 请求（JSON 格式）
+     *
+     * @param urlString 请求地址
+     * @param jsonBody  JSON 请求体
+     */
     private static void sendPostRequest(String urlString, String jsonBody) {
         try {
             URL url = new URL(urlString);
@@ -111,10 +127,25 @@ public class ApiTest {
         }
     }
 
+    /**
+     * 微信模板消息请求体
+     * <p>
+     * 对应微信模板消息 API 的 JSON 结构：
+     * <pre>
+     * {
+     *   "touser": "接收者 openid",
+     *   "template_id": "模板 ID",
+     *   "url": "点击跳转链接",
+     *   "data": {
+     *     "key": { "value": "内容" }
+     *   }
+     * }
+     * </pre>
+     */
     public static class Message {
-        private String touser = "or0Ab6ivwmypESVp_bYuk92T6SvU";
-        private String template_id = "mKhGjV7UAV7Se9_byoPrgRlNfgJac8ZAfLnK8hyGmTQ";
-        private String url = "https://github.com/fuzhengwei/openai-code-review-log/blob/master/2024-07-27/Wzpxr6j1JY9k.md";
+        private String touser = "oeDKo2C9UYXfb9h2csoMTg84K10U";
+        private String template_id = "6phduhnE-FPrSbx4xqnd_9PekPXczY8LiQO_A0rB3R8";
+        private String url = "https://github.com/YNAlone/openai-code-review-log/blob/main/2026-05-03/1IdpYf3CuAjh.md";
         private Map<String, Map<String, String>> data = new HashMap<>();
 
         public void put(String key, String value) {
