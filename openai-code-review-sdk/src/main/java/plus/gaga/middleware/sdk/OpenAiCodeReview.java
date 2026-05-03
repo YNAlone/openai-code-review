@@ -111,6 +111,7 @@ public class OpenAiCodeReview {
         }
     }
 
+
     private static String codeReview(String diffCode) throws Exception {
         String apiKeySecret = "50838fdd6ee3414594e47ece0cd5be30.fdn4C393LncqLKa6";
         String token = BearerTokenUtils.getToken(apiKeySecret);
