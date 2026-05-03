@@ -1,7 +1,7 @@
 package plus.gaga.middleware.sdk;
 
 import com.alibaba.fastjson2.JSON;
-import org.apache.logging.log4j.message.Message;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
