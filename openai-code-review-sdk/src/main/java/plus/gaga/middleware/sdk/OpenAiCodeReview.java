@@ -97,7 +97,7 @@ public class OpenAiCodeReview {
     }
 
     public static class Message {
-        private String touser = "oeDKo2C9UYXfb9h2csoMTg84K10U";
+        private String touser = "oeDKo2LJannz4lPs_9f9mKMKnITA";
         private String template_id = "6phduhnE-FPrSbx4xqnd_9PekPXczY8LiQO_A0rB3R8";
         private String url = "https://github.com/YNAlone/openai-code-review-log/blob/main/2026-05-03/1IdpYf3CuAjh.md";
         private Map<String, Map<String, String>> data = new HashMap<>();
