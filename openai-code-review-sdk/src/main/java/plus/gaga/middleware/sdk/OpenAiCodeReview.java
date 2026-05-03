@@ -139,7 +139,7 @@ public class OpenAiCodeReview {
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""));
 
 
-        return "https://github.com/YNAlone/openai-code-review-log/blob/master" + dateFolderName + "/" + filename;
+        return "https://github.com/YNAlone/openai-code-review-log/blob/master/" + dateFolderName + "/" + filename;
     }
 
     private static String generateRandomString(int length) {
