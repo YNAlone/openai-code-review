@@ -54,9 +54,9 @@ public class OpenAiCodeReview {
     public static void main(String[] args) throws Exception {
         System.out.println("openai 代码评审 ，测试执行");
         GitCommand gitCommand = new GitCommand(
-                    getEnv( "CODE_REVIEW_L0G_URI"),
-                    getEnv("CODE_TOKEN"),
-                    getEnv("COMMIT_PR0JECT"),
+                    getEnv( "GITHUB_REVIEW_LOG_URI"),
+                    getEnv("GITHUB_TOKEN"),
+                    getEnv("COMMIT_PROJECT"),
                     getEnv("COMMIT_BRANCH"),
                     getEnv("COMMIT_AUTHOR"),
                     getEnv("COMMIT_MESSAGE")
