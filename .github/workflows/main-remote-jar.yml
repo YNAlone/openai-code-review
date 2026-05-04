@@ -28,7 +28,7 @@ jobs:
         run: mkdir -p ./libs
 
       - name: Download openai-code-review-sdk JAR
-        run: wget -O ./libs/openai-code-review-sdk-1.0.jar https://github.com/YNAlone/openai-code-review-log/releases/download/untagged-0472d0eb2ad2d98a68a9/openai-code-review-sdk-1.0.jar
+        run: wget -O ./libs/openai-code-review-sdk-1.0.jar https://github.com/YNAlone/openai-code-review-log/releases/download/v1.0.0/openai-code-review-sdk-1.0.jar
 
       - name: Get repository name
         id: repo-name
