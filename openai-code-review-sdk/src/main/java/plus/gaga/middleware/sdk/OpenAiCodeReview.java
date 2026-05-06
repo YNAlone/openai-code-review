@@ -74,7 +74,6 @@ public class OpenAiCodeReview {
         openAiCodeReviewService.exec();
         logger.info("openai-code-review done！！");
     }
-
     private static String getEnv(String key) throws Exception {
         String value = System.getenv(key);
         if(value == null || value.isEmpty()) {
