@@ -79,9 +79,10 @@ public class GitCommand {
         logProcessBuilder.directory(new File("."));
         Process logProcess = logProcessBuilder.start();
 
-        BufferedReader logReader = new BufferedReader(new InputStreamReader(logProcess.getInputStream()));
-        String latestCommitHash = logReader.readLine();
-        logReader.close();
+        String latestCommitHash;
+        try (BufferedReader logReader = new BufferedReader(new InputStreamReader(logProcess.getInputStream()))) {
+            latestCommitHash = logReader.readLine();
+        }
         logProcess.waitFor();
 
         // 第二步：获取该 commit 的 diff（与父 commit 对比）
@@ -90,12 +91,12 @@ public class GitCommand {
         Process diffProcess = diffProcessBuilder.start();
 
         StringBuilder diffCode = new StringBuilder();
-        BufferedReader diffReader = new BufferedReader(new InputStreamReader(diffProcess.getInputStream()));
-        String line;
-        while ((line = diffReader.readLine()) != null) {
-            diffCode.append(line).append("\n");
+        try (BufferedReader diffReader = new BufferedReader(new InputStreamReader(diffProcess.getInputStream()))) {
+            String line;
+            while ((line = diffReader.readLine()) != null) {
+                diffCode.append(line).append("\n");
+            }
         }
-        diffReader.close();
 
         int exitCode = diffProcess.waitFor();
         if (exitCode != 0) {
@@ -116,34 +117,35 @@ public class GitCommand {
      */
     public String commitAndPush(String recommend) throws Exception {
         // clone 评审日志仓库到本地 repo 目录
-        Git git = Git.cloneRepository()
+        try (Git git = Git.cloneRepository()
                 .setURI(githubReviewLogUri + ".git")
                 .setDirectory(new File("repo"))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, ""))
-                .call();
+                .call()) {
 
-        // 按日期创建目录（如 repo/2026-05-03）
-        String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        File dateFolder = new File("repo/" + dateFolderName);
-        if (!dateFolder.exists()) {
-            dateFolder.mkdirs();
+            // 按日期创建目录（如 repo/2026-05-03）
+            String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            File dateFolder = new File("repo/" + dateFolderName);
+            if (!dateFolder.exists()) {
+                dateFolder.mkdirs();
+            }
+
+            // 文件名：项目-分支-作者-时间戳-4位随机数.md，保证唯一性
+            String fileName = project + "-" + branch + "-" + author + System.currentTimeMillis() + "-" + RandomStringUtils.randomNumeric(4) + ".md";
+            File newFile = new File(dateFolder, fileName);
+            try (FileWriter writer = new FileWriter(newFile)) {
+                writer.write(recommend);
+            }
+
+            // 提交并推送
+            git.add().addFilepattern(dateFolderName + "/" + fileName).call();
+            git.commit().setMessage("add code review new file" + fileName).call();
+            git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
+
+            logger.info("openai-code-review git commit and push done! {}", fileName);
+
+            return githubReviewLogUri + "/blob/master/" + dateFolderName + "/" + fileName;
         }
-
-        // 文件名：项目-分支-作者-时间戳-4位随机数.md，保证唯一性
-        String fileName = project + "-" + branch + "-" + author + System.currentTimeMillis() + "-" + RandomStringUtils.randomNumeric(4) + ".md";
-        File newFile = new File(dateFolder, fileName);
-        try (FileWriter writer = new FileWriter(newFile)) {
-            writer.write(recommend);
-        }
-
-        // 提交并推送
-        git.add().addFilepattern(dateFolderName + "/" + fileName).call();
-        git.commit().setMessage("add code review new file" + fileName).call();
-        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
-
-        logger.info("openai-code-review git commit and push done! {}", fileName);
-
-        return githubReviewLogUri + "/blob/master/" + dateFolderName + "/" + fileName;
     }
 
     // ==================== Getters ====================

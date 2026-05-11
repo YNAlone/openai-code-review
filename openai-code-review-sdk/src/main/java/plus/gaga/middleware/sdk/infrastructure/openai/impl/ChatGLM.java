@@ -40,15 +40,15 @@ public class ChatGLM implements IOpenAI {
             os.write(input, 0, input.length);
         }
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;
         StringBuilder content = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+        } finally {
+            connection.disconnect();
         }
-
-        in.close();
-        connection.disconnect();
 
         return JSON.parseObject(content.toString(), ChatCompletionSyncResponseDTO.class);
     }

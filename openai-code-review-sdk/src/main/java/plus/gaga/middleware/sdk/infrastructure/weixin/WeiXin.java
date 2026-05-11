@@ -43,19 +43,23 @@ public class WeiXin {
 
         URL url = new URL(String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken));
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json; utf-8");
-        conn.setRequestProperty("Accept", "application/json");
-        conn.setDoOutput(true);
+        try {
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
 
-        try (OutputStream os = conn.getOutputStream()) {
-            byte[] input = JSON.toJSONString(templateMessageDTO).getBytes(StandardCharsets.UTF_8);
-            os.write(input, 0, input.length);
-        }
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = JSON.toJSONString(templateMessageDTO).getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
 
-        try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
-            String response = scanner.useDelimiter("\\A").next();
-            logger.info("openai-code-review weixin template message! {}", response);
+            try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
+                String response = scanner.useDelimiter("\\A").next();
+                logger.info("openai-code-review weixin template message! {}", response);
+            }
+        } finally {
+            conn.disconnect();
         }
     }
 

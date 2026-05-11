@@ -36,6 +36,7 @@ public abstract class AbstractOpenAiCodeReviewService implements IOpenAiCodeRevi
             pushMessage(logUrl);
         } catch (Exception e) {
             logger.error("openai-code-review error", e);
+            throw new RuntimeException("openai-code-review exec failed", e);
         }
 
     }
