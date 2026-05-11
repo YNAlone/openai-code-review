@@ -130,7 +130,7 @@ public class ApiTest {
         return "test_user";
     }*/
 
-    // ====================== 4. 异常处理缺失类 ======================
+/*    // ====================== 4. 异常处理缺失类 ======================
     @Test
     public void testExceptionHandling_EmptyCatch() {
         // 空的catch块，吞掉异常
@@ -159,35 +159,35 @@ public class ApiTest {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }*/
+
+    // ====================== 5. 资源未关闭类 ======================
+    @Test
+    public void testResourceLeak_FileInputStream() {
+        // 文件流未关闭
+        try {
+            FileInputStream fis = new FileInputStream("test.txt");
+            byte[] data = new byte[1024];
+            fis.read(data);
+            // 缺少fis.close()
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-//    // ====================== 5. 资源未关闭类 ======================
-//    @Test
-//    public void testResourceLeak_FileInputStream() {
-//        // 文件流未关闭
-//        try {
-//            FileInputStream fis = new FileInputStream("test.txt");
-//            byte[] data = new byte[1024];
-//            fis.read(data);
-//            // 缺少fis.close()
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void testResourceLeak_Connection() {
-//        // 数据库连接未关闭
-//        try {
-//            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "123456");
-//            Statement stmt = conn.createStatement();
-//            stmt.execute("SELECT * FROM users");
-//            // 缺少conn.close()和stmt.close()
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
+    @Test
+    public void testResourceLeak_Connection() {
+        // 数据库连接未关闭
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "123456");
+            Statement stmt = conn.createStatement();
+            stmt.execute("SELECT * FROM users");
+            // 缺少conn.close()和stmt.close()
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 //    // ====================== 6. 低效代码/性能问题类 ======================
 //    @Test
 //    public void testPerformance_StringConcatenationInLoop() {
