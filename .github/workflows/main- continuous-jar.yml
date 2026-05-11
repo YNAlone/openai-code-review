@@ -115,10 +115,6 @@ jobs:
           CHATGLM_APIHOST: ${{ secrets.CHATGLM_APIHOST }}
           CHATGLM_APIKEYSECRET: ${{ secrets.CHATGLM_APIKEYSECRET }}
 
-    # 输出每个测试的耗时，用于最终统计
-    outputs:
-      duration_${{ matrix.run }}: ${{ steps.code-review.outputs.duration }}
-
   # 结果统计阶段：自动计算成功率和平均耗时
   report:
     needs: [prepare, batch-run]
@@ -137,28 +133,34 @@ jobs:
           SUCCESS_COUNT=0
           TOTAL_DURATION=0
           
-          # 遍历所有运行结果
-          for i in $(seq 1 ${{ github.event.inputs.run_count }}); do
-            DURATION_VAR="duration_$i"
-            DURATION="${{ needs.batch-run.outputs[$DURATION_VAR] }}"
+          # 从GitHub API获取所有运行结果
+          RUN_ID=${{ github.run_id }}
+          REPO=${{ github.repository }}
+          TOKEN=${{ secrets.GITHUB_TOKEN }}
           
-            if [ -n "$DURATION" ] && [ "$DURATION" -gt 0 ]; then
+          # 获取所有job的结果
+          JOBS=$(curl -s -H "Authorization: token $TOKEN" \
+            "https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/jobs")
+          
+          # 提取batch-run job的耗时
+          while IFS= read -r duration; do
+            if [ -n "$duration" ] && [ "$duration" -gt 0 ]; then
               SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
-              TOTAL_DURATION=$((TOTAL_DURATION + DURATION))
-              echo "✅ 第$i次测试成功，耗时: $DURATION 秒" >> report.md
-            else
-              echo "❌ 第$i次测试失败" >> report.md
+              TOTAL_DURATION=$((TOTAL_DURATION + duration))
+              echo "✅ 第$SUCCESS_COUNT次测试成功，耗时: $duration 秒" >> report.md
             fi
-          done
+          done < <(echo "$JOBS" | grep -o '"duration": [0-9]*' | cut -d' ' -f2)
           
           # 计算成功率和平均耗时
-          SUCCESS_RATE=$(echo "scale=2; $SUCCESS_COUNT / ${{ github.event.inputs.run_count }} * 100" | bc)
+          TOTAL_COUNT=${{ github.event.inputs.run_count }}
+          SUCCESS_RATE=$(echo "scale=2; $SUCCESS_COUNT / $TOTAL_COUNT * 100" | bc)
           AVG_DURATION=$(echo "scale=2; $TOTAL_DURATION / $SUCCESS_COUNT" | bc)
           
           echo "" >> report.md
           echo "### 测试结果统计" >> report.md
+          echo "- 总执行次数: $TOTAL_COUNT" >> report.md
           echo "- 成功次数: $SUCCESS_COUNT" >> report.md
-          echo "- 失败次数: $(( ${{ github.event.inputs.run_count }} - $SUCCESS_COUNT ))" >> report.md
+          echo "- 失败次数: $((TOTAL_COUNT - SUCCESS_COUNT))" >> report.md
           echo "- 成功率: $SUCCESS_RATE%" >> report.md
           echo "- 平均执行耗时: $AVG_DURATION 秒" >> report.md
           
