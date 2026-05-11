@@ -161,6 +161,7 @@ public class ApiTest {
         }
     }*/
 
+/*
     // ====================== 5. 资源未关闭类 ======================
     @Test
     public void testResourceLeak_FileInputStream() {
@@ -187,35 +188,36 @@ public class ApiTest {
             e.printStackTrace();
         }
     }
+*/
 
-//    // ====================== 6. 低效代码/性能问题类 ======================
-//    @Test
-//    public void testPerformance_StringConcatenationInLoop() {
-//        // 循环中使用+拼接字符串
-//        String result = "";
-//        for (int i = 0; i < 1000; i++) {
-//            result += i;
-//        }
-//        System.out.println(result);
-//    }
-//
-//    @Test
-//    public void testPerformance_UnnecessaryObjectCreation() {
-//        // 循环中创建不必要的对象
-//        for (int i = 0; i < 1000; i++) {
-//            Integer num = new Integer(i); // 应该使用Integer.valueOf(i)
-//            System.out.println(num);
-//        }
-//    }
-//
-//    @Test
-//    public void testPerformance_ArrayListInitialCapacity() {
-//        // 未指定ArrayList初始容量，导致频繁扩容
-//        List<String> list = new ArrayList<>();
-//        for (int i = 0; i < 10000; i++) {
-//            list.add("item" + i);
-//        }
-//    }
+    // ====================== 6. 低效代码/性能问题类 ======================
+    @Test
+    public void testPerformance_StringConcatenationInLoop() {
+        // 循环中使用+拼接字符串
+        String result = "";
+        for (int i = 0; i < 1000; i++) {
+            result += i;
+        }
+        System.out.println(result);
+    }
+
+    @Test
+    public void testPerformance_UnnecessaryObjectCreation() {
+        // 循环中创建不必要的对象
+        for (int i = 0; i < 1000; i++) {
+            Integer num = new Integer(i); // 应该使用Integer.valueOf(i)
+            System.out.println(num);
+        }
+    }
+
+    @Test
+    public void testPerformance_ArrayListInitialCapacity() {
+        // 未指定ArrayList初始容量，导致频繁扩容
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            list.add("item" + i);
+        }
+    }
 //
 //    // ====================== 7. 安全隐患类 ======================
 //    @Test
