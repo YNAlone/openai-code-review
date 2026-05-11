@@ -28,7 +28,7 @@ public class ApiTest {
 //        System.out.println(Integer.parseInt("cc33"));
 //    }
     // ====================== 1. 空指针异常类 ======================
-    @Test
+/*    @Test
     public void testNullPointerException_DirectCall() {
         // 直接调用null对象的方法
         String str = null;
@@ -59,43 +59,43 @@ public class ApiTest {
     private void processString(String str) {
         // 缺少null检查
         System.out.println(str.toUpperCase());
+    }*/
+
+    // ====================== 2. SQL注入风险类 ======================
+    @Test
+    public void testSQLInjection_StringConcatenation() {
+        // 直接拼接用户输入到SQL语句
+        String username = "admin' OR '1'='1";
+        String sql = "SELECT * FROM users WHERE username = '" + username + "'";
+        executeSQL(sql);
     }
 
-//    // ====================== 2. SQL注入风险类 ======================
-//    @Test
-//    public void testSQLInjection_StringConcatenation() {
-//        // 直接拼接用户输入到SQL语句
-//        String username = "admin' OR '1'='1";
-//        String sql = "SELECT * FROM users WHERE username = '" + username + "'";
-//        executeSQL(sql);
-//    }
-//
-//    @Test
-//    public void testSQLInjection_StatementUsage() {
-//        // 使用Statement而非PreparedStatement
-//        String userInput = "test'; DROP TABLE users; --";
-//        try {
-//            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "123456");
-//            Statement stmt = conn.createStatement();
-//            stmt.execute("INSERT INTO logs (content) VALUES ('" + userInput + "')");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void testSQLInjection_LikeClause() {
-//        // LIKE子句中的SQL注入
-//        String keyword = "%' OR 1=1 --";
-//        String sql = "SELECT * FROM products WHERE name LIKE '%" + keyword + "%'";
-//        executeSQL(sql);
-//    }
-//
-//    private void executeSQL(String sql) {
-//        // 模拟SQL执行
-//        System.out.println("执行SQL: " + sql);
-//    }
-//
+    @Test
+    public void testSQLInjection_StatementUsage() {
+        // 使用Statement而非PreparedStatement
+        String userInput = "test'; DROP TABLE users; --";
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "123456");
+            Statement stmt = conn.createStatement();
+            stmt.execute("INSERT INTO logs (content) VALUES ('" + userInput + "')");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testSQLInjection_LikeClause() {
+        // LIKE子句中的SQL注入
+        String keyword = "%' OR 1=1 --";
+        String sql = "SELECT * FROM products WHERE name LIKE '%" + keyword + "%'";
+        executeSQL(sql);
+    }
+
+    private void executeSQL(String sql) {
+        // 模拟SQL执行
+        System.out.println("执行SQL: " + sql);
+    }
+
 //    // ====================== 3. 命名不规范类 ======================
 //    @Test
 //    public void testNamingConvention_ClassName() {
