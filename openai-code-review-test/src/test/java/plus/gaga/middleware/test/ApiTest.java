@@ -62,7 +62,7 @@ public class ApiTest {
     }*/
 
     // ====================== 2. SQL注入风险类 ======================
-    @Test
+  /*  @Test
     public void testSQLInjection_StringConcatenation() {
         // 直接拼接用户输入到SQL语句
         String username = "admin' OR '1'='1";
@@ -94,42 +94,42 @@ public class ApiTest {
     private void executeSQL(String sql) {
         // 模拟SQL执行
         System.out.println("执行SQL: " + sql);
+    }*/
+
+    // ====================== 3. 命名不规范类 ======================
+    @Test
+    public void testNamingConvention_ClassName() {
+        // 类名使用小写开头（此处为测试用例，实际类名已规范）
+        class userService {
+            public void addUser() {}
+        }
     }
 
-//    // ====================== 3. 命名不规范类 ======================
-//    @Test
-//    public void testNamingConvention_ClassName() {
-//        // 类名使用小写开头（此处为测试用例，实际类名已规范）
-//        class userService {
-//            public void addUser() {}
-//        }
-//    }
-//
-//    @Test
-//    public void testNamingConvention_MethodName() {
-//        // 方法名使用大驼峰
-//        String UserName = getUserName();
-//    }
-//
-//    @Test
-//    public void testNamingConvention_ConstantName() {
-//        // 常量未使用全大写
-//        final int maxRetryCount = 3;
-//        System.out.println(maxRetryCount);
-//    }
-//
-//    @Test
-//    public void testNamingConvention_MeaninglessName() {
-//        // 无意义的变量名
-//        int a = 100;
-//        String b = "test";
-//        System.out.println(a + b);
-//    }
-//
-//    private String getUserName() {
-//        return "test_user";
-//    }
-//
+    @Test
+    public void testNamingConvention_MethodName() {
+        // 方法名使用大驼峰
+        String UserName = getUserName();
+    }
+
+    @Test
+    public void testNamingConvention_ConstantName() {
+        // 常量未使用全大写
+        final int maxRetryCount = 3;
+        System.out.println(maxRetryCount);
+    }
+
+    @Test
+    public void testNamingConvention_MeaninglessName() {
+        // 无意义的变量名
+        int a = 100;
+        String b = "test";
+        System.out.println(a + b);
+    }
+
+    private String getUserName() {
+        return "test_user";
+    }
+
 //    // ====================== 4. 异常处理缺失类 ======================
 //    @Test
 //    public void testExceptionHandling_EmptyCatch() {
