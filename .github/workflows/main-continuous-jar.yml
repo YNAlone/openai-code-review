@@ -7,11 +7,10 @@ on:
   pull_request:
     branches:
       - master
-  # 新增：手动触发批量测试
   workflow_dispatch:
     inputs:
       run_count:
-        description: '测试执行次数'
+        description: '测试执行次数（仅批量测试时生效）'
         required: true
         default: '10'
         type: string
@@ -22,17 +21,43 @@ on:
         type: boolean
 
 jobs:
-  build:
+  # 第一步：生成测试矩阵
+  # - 普通 push/PR：生成 [1]，只跑一次
+  # - 批量测试：生成 [1,2,...,run_count]，跑 run_count 次
+  prepare-matrix:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    # 批量测试时并行执行
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate test matrix
+        id: set-matrix
+        run: |
+          BATCH="${{ github.event.inputs.batch_test }}"
+          COUNT="${{ github.event.inputs.run_count }}"
+          if [ "$BATCH" = "true" ]; then
+            JSON="["
+            for i in $(seq 1 $COUNT); do
+              if [ $i -gt 1 ]; then JSON="$JSON,"; fi
+              JSON="$JSON$i"
+            done
+            JSON="$JSON]"
+          else
+            JSON="[1]"
+          fi
+          echo "matrix=$JSON" >> $GITHUB_OUTPUT
+          echo "Generated matrix: $JSON"
+
+  build:
+    needs: prepare-matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
     strategy:
       fail-fast: false
-      max-parallel: 10
+      # max-parallel 设为 1：批量测试时每次只跑一个 job，
+      # 避免多个 job 同时 git push 产生冲突
+      max-parallel: 1
       matrix:
-        run: ${{ fromJson(github.event.inputs.run_count || '[1]') }}
-    # 只有手动触发且开启批量测试时，才会并行执行
-    if: ${{ !github.event.inputs.batch_test || matrix.run }}
+        run: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
 
     steps:
       - name: Checkout repository
@@ -42,7 +67,7 @@ jobs:
           clean: true
           token: ${{ secrets.CODE_TOKEN }}
 
-      # 批量测试时自动模拟代码变更
+      # 批量测试时：模拟代码变更并推送，模拟真实 CI/CD 流程
       - name: 模拟代码变更（批量测试专用）
         if: ${{ github.event.inputs.batch_test == 'true' }}
         run: |
@@ -97,7 +122,7 @@ jobs:
           COMMIT_ID: ${{ env.COMMIT_ID }}
           COMMIT_AUTHOR: ${{ env.COMMIT_AUTHOR }}
           COMMIT_MESSAGE: ${{ env.COMMIT_MESSAGE }}
-          WEIXIN_APPID: ${{ secrets.WEIXIN_SECRET }}
+          WEIXIN_APPID: ${{ secrets.WEIXIN_APPID }}
           WEIXIN_SECRET: ${{ secrets.WEIXIN_SECRET }}
           WEIXIN_TOUSER: ${{ secrets.WEIXIN_TOUSER }}
           WEIXIN_TEMPLATE_ID: ${{ secrets.WEIXIN_TEMPLATE_ID }}
