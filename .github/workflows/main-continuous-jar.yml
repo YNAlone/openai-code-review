@@ -17,7 +17,7 @@ on:
       batch_test:
         description: '是否开启批量测试'
         required: true
-        default: 'false'
+        default: false
         type: boolean
 
 jobs:
