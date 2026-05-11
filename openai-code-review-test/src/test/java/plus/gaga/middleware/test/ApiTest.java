@@ -219,50 +219,50 @@ public class ApiTest {
 //        }
 //    }
 
-    // ====================== 7. 安全隐患类 ======================
+//    // ====================== 7. 安全隐患类 ======================
+//    @Test
+//    public void testSecurity_HardcodedCredentials() {
+//        // 敏感信息硬编码
+//        String dbPassword = "123456";
+//        String apiKey = "sk_abcdefghijklmnopqrstuvwxyz";
+//        System.out.println("连接数据库，密码: " + dbPassword);
+//    }
+//
+//    @Test
+//    public void testSecurity_HardcodedIP() {
+//        // IP地址硬编码
+//        String serverUrl = "http://192.168.1.100:8080/api";
+//        System.out.println("访问服务器: " + serverUrl);
+//    }
+
+    // ====================== 8. 代码规范问题类 ======================
     @Test
-    public void testSecurity_HardcodedCredentials() {
-        // 敏感信息硬编码
-        String dbPassword = "123456";
-        String apiKey = "sk_abcdefghijklmnopqrstuvwxyz";
-        System.out.println("连接数据库，密码: " + dbPassword);
+    public void testCodeStyle_MagicValue() {
+        // 魔法值未定义为常量
+        if (user.getAge() > 18) {
+            System.out.println("成年人");
+        }
     }
 
     @Test
-    public void testSecurity_HardcodedIP() {
-        // IP地址硬编码
-        String serverUrl = "http://192.168.1.100:8080/api";
-        System.out.println("访问服务器: " + serverUrl);
+    public void testCodeStyle_UnusedImport() {
+        // 无用的导入（本文件顶部导入了java.util.ArrayList但未使用）
+        System.out.println("测试无用导入");
     }
 
-//    // ====================== 8. 代码规范问题类 ======================
-//    @Test
-//    public void testCodeStyle_MagicValue() {
-//        // 魔法值未定义为常量
-//        if (user.getAge() > 18) {
-//            System.out.println("成年人");
-//        }
-//    }
-//
-//    @Test
-//    public void testCodeStyle_UnusedImport() {
-//        // 无用的导入（本文件顶部导入了java.util.ArrayList但未使用）
-//        System.out.println("测试无用导入");
-//    }
-//
-//    @Test
-//    public void testCodeStyle_LongMethod() {
-//        // 方法过长（超过50行）
-//        // 此处省略50行以上的代码
-//        System.out.println("这是一个过长的方法");
-//    }
-//
-//    // 模拟用户类
-//    static class User {
-//        private int age;
-//        public int getAge() { return age; }
-//    }
-//
-//    private User user = new User();
+    @Test
+    public void testCodeStyle_LongMethod() {
+        // 方法过长（超过50行）
+        // 此处省略50行以上的代码
+        System.out.println("这是一个过长的方法");
+    }
+
+    // 模拟用户类
+    static class User {
+        private int age;
+        public int getAge() { return age; }
+    }
+
+    private User user = new User();
 }
 
