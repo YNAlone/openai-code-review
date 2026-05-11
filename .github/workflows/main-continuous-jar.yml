@@ -93,6 +93,7 @@ jobs:
         with:
           max_attempts: 3
           retry_wait_seconds: 5
+          timeout_minutes: 3
           command: |
             wget -O ./libs/openai-code-review-sdk-1.0.jar https://github.com/YNAlone/openai-code-review-log/releases/download/v1.0.0/openai-code-review-sdk-1.0.jar
 
