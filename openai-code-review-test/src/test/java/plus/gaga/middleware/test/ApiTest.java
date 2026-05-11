@@ -96,7 +96,7 @@ public class ApiTest {
         System.out.println("执行SQL: " + sql);
     }*/
 
-    // ====================== 3. 命名不规范类 ======================
+  /*  // ====================== 3. 命名不规范类 ======================
     @Test
     public void testNamingConvention_ClassName() {
         // 类名使用小写开头（此处为测试用例，实际类名已规范）
@@ -128,39 +128,39 @@ public class ApiTest {
 
     private String getUserName() {
         return "test_user";
+    }*/
+
+    // ====================== 4. 异常处理缺失类 ======================
+    @Test
+    public void testExceptionHandling_EmptyCatch() {
+        // 空的catch块，吞掉异常
+        try {
+            int result = 10 / 0;
+        } catch (Exception e) {
+            // 什么都不做
+        }
     }
 
-//    // ====================== 4. 异常处理缺失类 ======================
-//    @Test
-//    public void testExceptionHandling_EmptyCatch() {
-//        // 空的catch块，吞掉异常
-//        try {
-//            int result = 10 / 0;
-//        } catch (Exception e) {
-//            // 什么都不做
-//        }
-//    }
-//
-//    @Test
-//    public void testExceptionHandling_PrintStackTraceOnly() {
-//        // 仅打印堆栈，不做任何处理
-//        try {
-//            FileInputStream fis = new FileInputStream("non_exist_file.txt");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    @Test
-//    public void testExceptionHandling_CatchThrowable() {
-//        // 捕获过于宽泛的Throwable
-//        try {
-//            // 业务代码
-//        } catch (Throwable t) {
-//            t.printStackTrace();
-//        }
-//    }
-//
+    @Test
+    public void testExceptionHandling_PrintStackTraceOnly() {
+        // 仅打印堆栈，不做任何处理
+        try {
+            FileInputStream fis = new FileInputStream("non_exist_file.txt");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testExceptionHandling_CatchThrowable() {
+        // 捕获过于宽泛的Throwable
+        try {
+            // 业务代码
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
 //    // ====================== 5. 资源未关闭类 ======================
 //    @Test
 //    public void testResourceLeak_FileInputStream() {
