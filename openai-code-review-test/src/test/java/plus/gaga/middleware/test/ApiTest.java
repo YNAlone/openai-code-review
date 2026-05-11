@@ -190,51 +190,51 @@ public class ApiTest {
     }
 */
 
-    // ====================== 6. 低效代码/性能问题类 ======================
-    @Test
-    public void testPerformance_StringConcatenationInLoop() {
-        // 循环中使用+拼接字符串
-        String result = "";
-        for (int i = 0; i < 1000; i++) {
-            result += i;
-        }
-        System.out.println(result);
-    }
-
-    @Test
-    public void testPerformance_UnnecessaryObjectCreation() {
-        // 循环中创建不必要的对象
-        for (int i = 0; i < 1000; i++) {
-            Integer num = new Integer(i); // 应该使用Integer.valueOf(i)
-            System.out.println(num);
-        }
-    }
-
-    @Test
-    public void testPerformance_ArrayListInitialCapacity() {
-        // 未指定ArrayList初始容量，导致频繁扩容
-        List<String> list = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
-            list.add("item" + i);
-        }
-    }
-//
-//    // ====================== 7. 安全隐患类 ======================
+//    // ====================== 6. 低效代码/性能问题类 ======================
 //    @Test
-//    public void testSecurity_HardcodedCredentials() {
-//        // 敏感信息硬编码
-//        String dbPassword = "123456";
-//        String apiKey = "sk_abcdefghijklmnopqrstuvwxyz";
-//        System.out.println("连接数据库，密码: " + dbPassword);
+//    public void testPerformance_StringConcatenationInLoop() {
+//        // 循环中使用+拼接字符串
+//        String result = "";
+//        for (int i = 0; i < 1000; i++) {
+//            result += i;
+//        }
+//        System.out.println(result);
 //    }
 //
 //    @Test
-//    public void testSecurity_HardcodedIP() {
-//        // IP地址硬编码
-//        String serverUrl = "http://192.168.1.100:8080/api";
-//        System.out.println("访问服务器: " + serverUrl);
+//    public void testPerformance_UnnecessaryObjectCreation() {
+//        // 循环中创建不必要的对象
+//        for (int i = 0; i < 1000; i++) {
+//            Integer num = new Integer(i); // 应该使用Integer.valueOf(i)
+//            System.out.println(num);
+//        }
 //    }
 //
+//    @Test
+//    public void testPerformance_ArrayListInitialCapacity() {
+//        // 未指定ArrayList初始容量，导致频繁扩容
+//        List<String> list = new ArrayList<>();
+//        for (int i = 0; i < 10000; i++) {
+//            list.add("item" + i);
+//        }
+//    }
+
+    // ====================== 7. 安全隐患类 ======================
+    @Test
+    public void testSecurity_HardcodedCredentials() {
+        // 敏感信息硬编码
+        String dbPassword = "123456";
+        String apiKey = "sk_abcdefghijklmnopqrstuvwxyz";
+        System.out.println("连接数据库，密码: " + dbPassword);
+    }
+
+    @Test
+    public void testSecurity_HardcodedIP() {
+        // IP地址硬编码
+        String serverUrl = "http://192.168.1.100:8080/api";
+        System.out.println("访问服务器: " + serverUrl);
+    }
+
 //    // ====================== 8. 代码规范问题类 ======================
 //    @Test
 //    public void testCodeStyle_MagicValue() {
