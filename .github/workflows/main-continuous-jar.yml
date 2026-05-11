@@ -1,4 +1,4 @@
-name: Build and Run OpenAiCodeReview By Main Maven Jar
+name: OpenAiCodeReview - CI/CD 代码评审（支持批量测试）
 
 on:
   push:
