@@ -1,10 +1,8 @@
 package plus.gaga.middleware.test;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.FileInputStream;
 import java.sql.Connection;
@@ -16,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class ApiTest {
 
@@ -239,7 +236,7 @@ public class ApiTest {
     @Test
     public void testCodeStyle_MagicValue() {
         // 魔法值未定义为常量
-        if (user.getAge() > 18) {
+        if (user.getAge() > 18222) {
             System.out.println("成年人");
         }
     }
