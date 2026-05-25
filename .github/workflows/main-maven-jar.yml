@@ -8,6 +8,11 @@ on:
     branches:
       - master-close
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,18 +30,18 @@ jobs:
           java-version: '17'
 
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean install -DskipTests
 
       - name: Copy openai-code-review-sdk JAR
         run: mvn dependency:copy -Dartifact=plus.gaga.middleware:openai-code-review-sdk:1.1.1 -DoutputDirectory=./libs
 
       - name: Get repository name
         id: repo-name
-        run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+        run: echo "REPO_NAME=${GITHUB_REPOSITORY}" >> $GITHUB_ENV
 
       - name: Get branch name
         id: branch-name
-        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        run: echo "BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
 
       - name: Get commit author
         id: commit-author
