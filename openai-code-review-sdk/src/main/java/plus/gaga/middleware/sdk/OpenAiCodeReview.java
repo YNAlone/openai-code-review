@@ -13,6 +13,7 @@ import plus.gaga.middleware.sdk.agent.ReviewRequest;
 import plus.gaga.middleware.sdk.agent.agents.ArchiveAgent;
 import plus.gaga.middleware.sdk.agent.agents.BugRiskReviewAgent;
 import plus.gaga.middleware.sdk.agent.agents.ChangedFileAgent;
+import plus.gaga.middleware.sdk.agent.agents.DiffPreprocessAgent;
 import plus.gaga.middleware.sdk.agent.agents.GitDiffAgent;
 import plus.gaga.middleware.sdk.agent.agents.GitHubPrCommentAgent;
 import plus.gaga.middleware.sdk.agent.agents.MaintainabilityReviewAgent;
@@ -20,6 +21,7 @@ import plus.gaga.middleware.sdk.agent.agents.PerformanceReviewAgent;
 import plus.gaga.middleware.sdk.agent.agents.ReportAggregatorAgent;
 import plus.gaga.middleware.sdk.agent.agents.SecurityReviewAgent;
 import plus.gaga.middleware.sdk.agent.agents.WechatNotifyAgent;
+import plus.gaga.middleware.sdk.agent.context.DiffPreprocessor;
 import plus.gaga.middleware.sdk.domain.model.Model;
 import plus.gaga.middleware.sdk.infrastructure.git.ChangedFileParser;
 import plus.gaga.middleware.sdk.infrastructure.git.GitCommand;
@@ -70,17 +72,20 @@ public class OpenAiCodeReview {
                 resolvePullRequestNumber(),
                 getEnvOrDefault("COMMIT_RANGE", "")
         );
-
+//          感知智能体包括git diff Agent  和 ChangedFileAgent 拉取Git diff 和 获取修改的文件
         List<CodeReviewAgent> perceptionAgents = Arrays.asList(
                 new GitDiffAgent(gitCommand),
-                new ChangedFileAgent(new ChangedFileParser())
+                new ChangedFileAgent(new ChangedFileParser()),
+                new DiffPreprocessAgent(new DiffPreprocessor())
         );
+//        评审智能体 包括安全性审查、风险漏洞审查、性能、可维护性各个方法的智能体
         List<CodeReviewAgent> reviewAgents = Arrays.asList(
                 new SecurityReviewAgent(reviewAssistant),
                 new BugRiskReviewAgent(reviewAssistant),
                 new PerformanceReviewAgent(reviewAssistant),
                 new MaintainabilityReviewAgent(reviewAssistant)
         );
+
         List<CodeReviewAgent> postAgents = Arrays.asList(
                 new ReportAggregatorAgent(),
                 new ArchiveAgent(gitCommand),

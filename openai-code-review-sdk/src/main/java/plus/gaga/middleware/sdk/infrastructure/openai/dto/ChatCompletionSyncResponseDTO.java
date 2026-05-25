@@ -1,10 +1,13 @@
 package plus.gaga.middleware.sdk.infrastructure.openai.dto;
 
+import com.alibaba.fastjson2.annotation.JSONField;
+
 import java.util.List;
 
 public class ChatCompletionSyncResponseDTO {
 
     private List<Choice> choices;
+    private Usage usage;
 
     public static class Choice {
         private Message message;
@@ -45,5 +48,48 @@ public class ChatCompletionSyncResponseDTO {
 
     public void setChoices(List<Choice> choices) {
         this.choices = choices;
+    }
+
+    public Usage getUsage() {
+        return usage;
+    }
+
+    public void setUsage(Usage usage) {
+        this.usage = usage;
+    }
+
+    public static class Usage {
+        @JSONField(name = "prompt_tokens")
+        private Integer promptTokens;
+
+        @JSONField(name = "completion_tokens")
+        private Integer completionTokens;
+
+        @JSONField(name = "total_tokens")
+        private Integer totalTokens;
+
+        public Integer getPromptTokens() {
+            return promptTokens;
+        }
+
+        public void setPromptTokens(Integer promptTokens) {
+            this.promptTokens = promptTokens;
+        }
+
+        public Integer getCompletionTokens() {
+            return completionTokens;
+        }
+
+        public void setCompletionTokens(Integer completionTokens) {
+            this.completionTokens = completionTokens;
+        }
+
+        public Integer getTotalTokens() {
+            return totalTokens;
+        }
+
+        public void setTotalTokens(Integer totalTokens) {
+            this.totalTokens = totalTokens;
+        }
     }
 }

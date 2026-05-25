@@ -79,12 +79,13 @@ public class GitCommand {
     }
 
     public String archive(ReviewRequest request, String recommend) throws Exception {
+//          克隆远程仓库到本地"repo"目录
         try (Git git = Git.cloneRepository()
                 .setURI(githubReviewLogUri + ".git")
                 .setDirectory(new File("repo"))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, ""))
                 .call()) {
-
+//
             String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
             File dateFolder = new File("repo/" + dateFolderName);
             if (!dateFolder.exists()) {
@@ -96,8 +97,9 @@ public class GitCommand {
             try (FileWriter writer = new FileWriter(newFile)) {
                 writer.write(recommend);
             }
-
+//          存储生成的评审报告文件
             git.add().addFilepattern(dateFolderName + "/" + fileName).call();
+//            提交
             git.commit().setMessage("add code review new file" + fileName).call();
             git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken, "")).call();
 
