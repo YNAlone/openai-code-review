@@ -244,7 +244,7 @@ public class ApiTest {
     @Test
     public void testCodeStyle_UnusedImport() {
         // 无用的导入（本文件顶部导入了java.util.ArrayList但未使用）
-        System.out.println("测试无用导入");
+        System.out.println("测试无用导入1111");
     }
 
     @Test

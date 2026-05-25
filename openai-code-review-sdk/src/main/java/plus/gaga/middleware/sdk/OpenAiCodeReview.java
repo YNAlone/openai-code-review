@@ -85,7 +85,7 @@ public class OpenAiCodeReview {
                 new PerformanceReviewAgent(reviewAssistant),
                 new MaintainabilityReviewAgent(reviewAssistant)
         );
-
+//              报告智能体 整理报告、提交报告、推动报告
         List<CodeReviewAgent> postAgents = Arrays.asList(
                 new ReportAggregatorAgent(),
                 new ArchiveAgent(gitCommand),
