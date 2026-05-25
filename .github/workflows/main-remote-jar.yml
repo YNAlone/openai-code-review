@@ -8,6 +8,11 @@ on:
     branches:
       - master-close
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,15 +33,15 @@ jobs:
         run: mkdir -p ./libs
 
       - name: Download openai-code-review-sdk JAR
-        run: wget -O ./libs/openai-code-review-sdk-1.0.jar https://github.com/YNAlone/openai-code-review-log/releases/download/v1.0.0/openai-code-review-sdk-1.0.jar
+        run: wget -O ./libs/openai-code-review-sdk-1.1.1.jar https://github.com/YNAlone/openai-code-review-log/releases/download/v1.1.1/openai-code-review-sdk-1.1.1.jar
 
       - name: Get repository name
         id: repo-name
-        run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+        run: echo "REPO_NAME=${GITHUB_REPOSITORY}" >> $GITHUB_ENV
 
       - name: Get branch name
         id: branch-name
-        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        run: echo "BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
 
       - name: Get commit author
         id: commit-author
@@ -54,7 +59,7 @@ jobs:
           echo "Commit message is ${{ env.COMMIT_MESSAGE }}"      
 
       - name: Run Code Review
-        run: java -jar ./libs/openai-code-review-sdk-1.0.jar
+        run: java -jar ./libs/openai-code-review-sdk-1.1.1.jar
         env:
           # Github 配置；GITHUB_REVIEW_LOG_URI「https://github.com/YNAlone/openai-code-review-log」、GITHUB_TOKEN「https://github.com/settings/tokens」
           GITHUB_REVIEW_LOG_URI: ${{ secrets.CODE_REVIEW_LOG_URI }}

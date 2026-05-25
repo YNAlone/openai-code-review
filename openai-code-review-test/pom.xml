@@ -6,7 +6,7 @@
     <parent>
         <groupId>plus.gaga.middleware</groupId>
         <artifactId>openai-code-review</artifactId>
-        <version>1.0</version>
+        <version>1.1.1</version>
     </parent>
 
     <artifactId>openai-code-review-test</artifactId>
@@ -57,7 +57,7 @@
         <dependency>
             <groupId>plus.gaga.middleware</groupId>
             <artifactId>openai-code-review-sdk</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

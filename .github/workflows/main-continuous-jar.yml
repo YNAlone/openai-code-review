@@ -16,6 +16,11 @@ on:
         required: true
         default: 'false'
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   # 第一步：生成批量测试的矩阵数组
   # - 普通 push/PR：生成 [1]，只跑一次
@@ -90,12 +95,12 @@ jobs:
           retry_wait_seconds: 5
           timeout_minutes: 3
           command: |
-            wget -O ./libs/openai-code-review-sdk-1.0.jar https://github.com/YNAlone/openai-code-review-log/releases/download/v1.0.0/openai-code-review-sdk-1.0.jar
+            wget -O ./libs/openai-code-review-sdk-1.1.1.jar https://github.com/YNAlone/openai-code-review-log/releases/download/v1.1.1/openai-code-review-sdk-1.1.1.jar
 
       - name: Get commit information
         run: |
-          echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
-          echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "REPO_NAME=${GITHUB_REPOSITORY}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
           echo "COMMIT_ID=${GITHUB_SHA}" >> $GITHUB_ENV
           echo "COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>')" >> $GITHUB_ENV
           echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
@@ -109,7 +114,7 @@ jobs:
           echo "提交信息: ${{ env.COMMIT_MESSAGE }}"
 
       - name: Run Code Review
-        run: java -jar ./libs/openai-code-review-sdk-1.0.jar
+        run: java -jar ./libs/openai-code-review-sdk-1.1.1.jar
         env:
           GITHUB_REVIEW_LOG_URI: ${{ secrets.CODE_REVIEW_LOG_URI }}
           GITHUB_TOKEN: ${{ secrets.CODE_TOKEN }}
