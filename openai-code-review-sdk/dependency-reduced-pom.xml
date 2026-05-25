@@ -3,7 +3,7 @@
   <parent>
     <artifactId>openai-code-review</artifactId>
     <groupId>plus.gaga.middleware</groupId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openai-code-review-sdk</artifactId>
