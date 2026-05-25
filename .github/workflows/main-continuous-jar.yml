@@ -90,7 +90,7 @@ jobs:
           retry_wait_seconds: 5
           timeout_minutes: 3
           command: |
-            wget -O ./libs/openai-code-review-sdk-1.1.0.jar https://github.com/YNAlone/openai-code-review-log/releases/download/v1.1.0/openai-code-review-sdk-1.1.0.jar
+            wget -O ./libs/openai-code-review-sdk-1.1.1.jar https://github.com/YNAlone/openai-code-review-log/releases/download/v1.1.1/openai-code-review-sdk-1.1.1.jar
 
       - name: Get commit information
         run: |
@@ -109,7 +109,7 @@ jobs:
           echo "提交信息: ${{ env.COMMIT_MESSAGE }}"
 
       - name: Run Code Review
-        run: java -jar ./libs/openai-code-review-sdk-1.1.0.jar
+        run: java -jar ./libs/openai-code-review-sdk-1.1.1.jar
         env:
           GITHUB_REVIEW_LOG_URI: ${{ secrets.CODE_REVIEW_LOG_URI }}
           GITHUB_TOKEN: ${{ secrets.CODE_TOKEN }}
